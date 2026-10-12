@@ -1,5 +1,23 @@
 import { useEffect, useRef, useState } from 'react'
 
+/* ================= ikon custom ================= */
+
+const Icon = ({ d, size = 20, fill = false, ...p }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill={fill ? 'currentColor' : 'none'}
+    stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...p}>
+    <path d={d} />
+  </svg>
+)
+const I = {
+  bolt: (s, p) => <Icon size={s} fill d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2z" {...p} />,
+  ticket: (s, p) => <Icon size={s} d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z M13 6v12" {...p} />,
+  pick: (s, p) => <Icon size={s} d="M12 3c3.5 0 8 4.5 8 9 0 4-3.5 8-8 9-4.5-1-8-5-8-9 0-4.5 4.5-9 8-9z M12 8v6" {...p} />,
+  speaker: (s, p) => <Icon size={s} d="M4 4h16v16H4z M12 15.5a2.5 2.5 0 1 0 0 .01 M12 8.5a1.5 1.5 0 1 0 0 .01" {...p} />,
+  mic: (s, p) => <Icon size={s} d="M12 3a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V6a3 3 0 0 1 3-3z M6 11a6 6 0 0 0 12 0 M12 17v4" {...p} />,
+  drum: (s, p) => <Icon size={s} d="M3 13h18 M5 13l-2 7h18l-2-7 M12 13V6 M9 6l6 4 M15 6l-6 4" {...p} />,
+  check: (s, p) => <Icon size={s} d="M4 12.5 9.5 18 20 6.5" {...p} />,
+}
+
 /* ================= data ================= */
 
 const EVENT_DATE = new Date('2026-12-19T16:00:00+07:00')
@@ -8,61 +26,72 @@ const MAX_QTY = 8
 
 const tiers = [
   {
-    id: 'festival', name: 'Festival Pass', phase: 'Presale 2',
+    id: 'reguler', name: 'Reguler', phase: 'Presale 2', icon: 'ticket',
     price: 350000, normal: 450000, left: 214,
-    desc: 'Akses 2 hari ke semua panggung dan area festival.',
-    feats: ['Semua panggung (3 realm)', 'Area festival & food court', 'E-ticket + wristband', 'Cosplay walk sore hari'],
-    hot: false,
+    desc: 'Buat yang mau seru-seruan bareng tanpa ribet.',
+    feats: ['Akses 2 hari semua panggung', 'Festival area & food court', 'E-ticket + wristband', 'Free sticker pack'],
   },
   {
-    id: 'vip', name: 'VIP Pass', phase: 'Presale 2',
-    price: 800000, normal: 1000000, left: 87,
-    desc: 'Posisi terbaik tanpa perlu datang pagi-pagi.',
-    feats: ['Semua benefit Festival', 'Front zone Sanctuary Stage', 'Lounge & toilet prioritas', 'Merchandise eksklusif'],
-    hot: true,
+    id: 'vip', name: 'VIP', phase: 'Presale 2', icon: 'bolt',
+    price: 800000, normal: 1000000, left: 87, hot: true,
+    desc: 'Posisi paling depan, nonton paling puas.',
+    feats: ['Semua benefit Reguler', 'Front zone Panggung Gelora', 'Lounge & toilet prioritas', 'Merchandise eksklusif'],
   },
   {
-    id: 'vvip', name: 'VVIP Pass', phase: 'Presale 2',
+    id: 'vvip', name: 'VVIP', phase: 'Presale 2', icon: 'mic',
     price: 1500000, normal: 1800000, left: 32,
-    desc: 'Pengalaman paling lengkap, kuota sangat terbatas.',
-    feats: ['Semua benefit VIP', 'Backstage tour + viewing deck', 'Meet & greet headliner', 'Jalur masuk khusus'],
-    hot: false,
+    desc: 'Pengalaman paling lengkap, kuota terbatas.',
+    feats: ['Semua benefit VIP', 'Meet & greet headliner', 'Viewing deck + backstage tour', 'Jalur masuk khusus'],
   },
 ]
 
 const lineup = [
-  { name: 'Hoshizora Reia', genre: 'Anison', role: 'Headliner · Hari 1', img: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=800&auto=format&fit=crop' },
-  { name: 'DJ Tsukuyomi', genre: 'EDM / Hardstyle', role: 'Headliner · Hari 2', img: 'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?q=80&w=800&auto=format&fit=crop' },
-  { name: 'Sora & The Wanderers', genre: 'J-Pop Band', role: 'Sanctuary Stage', img: 'https://images.unsplash.com/photo-1501281668745-f7f57925c3b4?q=80&w=800&auto=format&fit=crop' },
-  { name: 'Neon Kitsune', genre: 'City Pop / Vocaloid', role: "Witch's Hollow", img: 'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=800&auto=format&fit=crop' },
-  { name: 'Galdos Orchestra', genre: 'Anime Orchestra', role: "Dragon's Roost", img: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?q=80&w=800&auto=format&fit=crop' },
-  { name: 'Mira Velvette', genre: 'Solo Ballad', role: 'Sanctuary Stage', img: 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?q=80&w=800&auto=format&fit=crop' },
+  { name: 'Tulus', genre: 'Pop / Soul', role: 'Headliner · Hari 1', img: '/artists/tulus.jpg' },
+  { name: 'Bernadya', genre: 'Pop Ballad', role: 'Headliner · Hari 2', img: '/artists/bernadya.jpg' },
+  { name: 'Perunggu', genre: 'Pop Punk', role: 'Panggung Distorsi', img: '/artists/perunggu.jpg' },
+  { name: 'Hindia', genre: 'Alternative', role: 'Panggung Gelora', img: '/artists/hindia.jpg' },
+  { name: 'Pee Wee Gaskins', genre: 'Pop Punk', role: 'Panggung Distorsi', img: '/artists/pwg.jpg' },
+  { name: 'Nadin Amizah', genre: 'Folk Pop', role: 'Panggung Senja', img: '/artists/nadin.jpg' },
+]
+
+const stages = [
+  { name: 'Panggung Gelora', tag: 'Main Stage', icon: 'speaker',
+    desc: 'Panggung terbesar. Headliner Tulus dan Bernadya tampil di sini, dengan tata cahaya dan LED raksasa.',
+    meta: 'Kapasitas 10.000 · Open gate 15.00' },
+  { name: 'Panggung Distorsi', tag: 'Pop Punk', icon: 'pick',
+    desc: 'Sarangnya anak pop punk. Perunggu, Pee Wee Gaskins, dan band-band distorsi lain sampai malam.',
+    meta: 'Moshpit aman · Sampai 23.00' },
+  { name: 'Panggung Senja', tag: 'Akustik', icon: 'mic',
+    desc: 'Sesi akustik intim di bawah langit senja. Duduk lesehan, sing along pelan-pelan.',
+    meta: 'Kapasitas 1.500 · Duduk santai' },
 ]
 
 const rundown = [
   { day: 'Hari 1', date: 'Sabtu, 19 Desember 2026', items: [
-    ['15.00', 'Open gate', 'Penukaran wristband & Cosplay Walk'],
-    ['16.00', 'Galdos Orchestra', "Dragon's Roost"],
-    ['18.30', 'Sora & The Wanderers', 'Sanctuary Stage'],
-    ['20.00', 'Mira Velvette', 'Sanctuary Stage'],
-    ['21.30', 'Hoshizora Reia', 'Headliner · Sanctuary Stage'],
+    ['15.00', 'Open gate', 'Penukaran wristband'],
+    ['16.00', 'Nadin Amizah', 'Panggung Senja'],
+    ['17.30', 'Hindia', 'Panggung Gelora'],
+    ['19.00', 'Perunggu', 'Panggung Distorsi'],
+    ['20.30', 'Pee Wee Gaskins', 'Panggung Distorsi'],
+    ['21.30', 'Tulus', 'Headliner · Panggung Gelora'],
   ]},
   { day: 'Hari 2', date: 'Minggu, 20 Desember 2026', items: [
-    ['15.00', 'Open gate', 'Penukaran wristband & Cosplay Walk'],
-    ['16.00', 'Neon Kitsune', "Witch's Hollow"],
-    ['18.00', 'Galdos Orchestra', "Dragon's Roost"],
-    ['20.00', 'Mira Velvette', 'Sanctuary Stage'],
-    ['21.30', 'DJ Tsukuyomi', "Headliner · Witch's Hollow"],
+    ['15.00', 'Open gate', 'Penukaran wristband'],
+    ['16.00', 'Perunggu', 'Panggung Distorsi'],
+    ['17.30', 'Pee Wee Gaskins', 'Panggung Distorsi'],
+    ['19.00', 'Nadin Amizah', 'Panggung Senja'],
+    ['20.00', 'Hindia', 'Panggung Gelora'],
+    ['21.30', 'Bernadya', 'Headliner · Panggung Gelora'],
   ]},
 ]
 
 const faqs = [
   { q: 'Bagaimana cara menerima e-ticket?', a: 'E-ticket dikirim ke email kamu maksimal 10 menit setelah pembayaran terkonfirmasi. Tunjukkan QR-nya di gerbang untuk ditukar wristband.' },
   { q: 'Apakah nama di tiket harus sesuai KTP?', a: 'Ya. Nama pembeli dipakai saat penukaran wristband, jadi pastikan data yang diisi benar dan sesuai kartu identitas.' },
-  { q: 'Apakah tiket bisa di-refund atau dijadwalkan ulang?', a: 'Tiket tidak bisa di-refund. Tapi kamu bisa mengalihkan ke orang lain maksimal H-3 acara lewat email konfirmasi.' },
+  { q: 'Apakah tiket bisa di-refund?', a: 'Tiket tidak bisa di-refund, tapi bisa dialihkan ke orang lain maksimal H-3 acara lewat email konfirmasi.' },
   { q: 'Metode pembayaran apa saja yang tersedia?', a: 'QRIS, virtual account (BCA, BRI, Mandiri), e-wallet (GoPay, OVO, DANA), kartu kredit/debit, dan gerai retail (Alfamart, Indomaret).' },
   { q: 'Berapa maksimal pembelian per transaksi?', a: 'Maksimal 8 tiket per transaksi. Kalau butuh lebih, ulangi pemesanan dengan email yang sama.' },
-  { q: 'Apakah boleh cosplay dan bawa kamera?', a: 'Cosplay sangat dianjurkan, ada Cosplay Walk tiap sore. Kamera HP boleh, kamera profesional dan drone tidak diizinkan.' },
+  { q: 'Boleh bawa banner dan kamera?', a: 'Banner ukuran kecil boleh, asal tidak menutupi penonton lain. Kamera HP boleh, kamera profesional dan drone tidak diizinkan.' },
 ]
 
 const payMethods = [
@@ -111,22 +140,14 @@ function useReveal(dep) {
   return ref
 }
 
-const SPARKS = Array.from({ length: 26 }, (_, i) => ({
-  id: i,
-  x: (i * 7919) % 100,
-  y: (i * 4799) % 45,
-  s: 3 + ((i * 37) % 5),
-  d: 2.4 + ((i * 13) % 40) / 10,
-}))
-
 /* ================= app ================= */
 
 export default function App() {
   const cd = useCountdown(EVENT_DATE)
   const [burger, setBurger] = useState(false)
   const [openFaq, setOpenFaq] = useState(0)
-  const [cart, setCart] = useState({ festival: 0, vip: 0, vvip: 0 })
-  const [modal, setModal] = useState(null) // null | 'data' | 'pay' | 'processing' | 'done'
+  const [cart, setCart] = useState({ reguler: 0, vip: 0, vvip: 0 })
+  const [modal, setModal] = useState(null)
   const [buyer, setBuyer] = useState({ name: '', email: '', phone: '' })
   const [errors, setErrors] = useState({})
   const [pay, setPay] = useState('')
@@ -169,13 +190,13 @@ export default function App() {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
       let c = ''
       for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)]
-      setCode('RST-' + c)
+      setCode('RIUH-' + c)
       setModal('done')
     }, 1800)
   }
   const closeModal = () => {
     setModal(null)
-    if (modal === 'done') { setCart({ festival: 0, vip: 0, vvip: 0 }); setPay('') }
+    if (modal === 'done') { setCart({ reguler: 0, vip: 0, vvip: 0 }); setPay('') }
   }
 
   return (
@@ -183,8 +204,8 @@ export default function App() {
       {/* ---------- nav ---------- */}
       <header className="nav">
         <a href="#top" className="brand">
-          <img src="/logo.png" alt="Logo RE:STAGE" className="brand-logo" />
-          <span className="brand-name">RE:STAGE</span>
+          <img src="/logo.png" alt="Logo RIUH FEST" className="brand-logo" />
+          <span className="brand-name">RIUH FEST</span>
         </a>
         <nav className={`nav-links ${burger ? 'open' : ''}`}>
           <a href="#lineup" onClick={() => setBurger(false)}>Lineup</a>
@@ -193,7 +214,7 @@ export default function App() {
           <a href="#faq" onClick={() => setBurger(false)}>FAQ</a>
         </nav>
         <div className="nav-cta">
-          <a href="#tiket" className="btn btn-glow">Beli Tiket</a>
+          <a href="#tiket" className="btn btn-fire">Beli Tiket</a>
           <button className="burger" onClick={() => setBurger(!burger)} aria-label="Menu">
             <span /><span /><span />
           </button>
@@ -203,19 +224,14 @@ export default function App() {
       {/* ---------- hero ---------- */}
       <section className="hero" id="top">
         <div className="sky" aria-hidden="true" />
+        <div className="halftone" aria-hidden="true" />
         <div className="sun" aria-hidden="true" />
-        <div className="cloud c1" aria-hidden="true" />
-        <div className="cloud c2" aria-hidden="true" />
-        <div className="cloud c3" aria-hidden="true" />
-        {SPARKS.map((s) => (
-          <span key={s.id} className="spark" aria-hidden="true" style={{
-            left: s.x + '%', top: s.y + '%', width: s.s, height: s.s, animationDuration: s.d + 's',
-          }} />
-        ))}
+        <div className="sticker s1 rv" aria-hidden="true">100%<br />LOKAL</div>
+        <div className="sticker s2 rv" aria-hidden="true">2 HARI<br />PENUH</div>
         <div className="hero-inner">
-          <p className="eyebrow rv">Another World Music Festival · Vol. 4</p>
-          <h1 className="hero-title rv">RE:STAGE</h1>
-          <p className="hero-sub rv">Dua malam festival musik bertema isekai. Anison, J-pop, EDM, sampai orkestra, semua dalam satu dunia.</p>
+          <p className="eyebrow rv">{I.bolt(14)} Festival Pop & Pop Punk Indonesia · Vol. 1</p>
+          <h1 className="hero-title rv">RIUH<br />FEST</h1>
+          <p className="hero-sub rv">Dua hari penuh distorsi dan sing along. Tulus, Bernadya, Perunggu, Hindia, Pee Wee Gaskins, Nadin Amizah, satu panggung riuh.</p>
           <div className="hero-pills rv">
             <span>19 – 20 Desember 2026</span>
             <span>Ecopark Ancol, Jakarta</span>
@@ -226,7 +242,7 @@ export default function App() {
             ))}
           </div>
           <div className="hero-cta rv">
-            <a href="#tiket" className="btn btn-glow btn-lg">Beli Tiket Sekarang</a>
+            <a href="#tiket" className="btn btn-fire btn-lg">Beli Tiket Sekarang</a>
             <a href="#lineup" className="btn btn-ghost btn-lg">Lihat Lineup</a>
           </div>
         </div>
@@ -236,7 +252,7 @@ export default function App() {
       {/* ---------- marquee ---------- */}
       <div className="marquee" aria-hidden="true">
         <div className="marquee-track">
-          {Array(2).fill('ANISON ✦ J-POP ✦ EDM ✦ ORCHESTRA ✦ CITY POP ✦ VOCALOID ✦ HARDSTYLE ✦ BALLAD ✦ ').map((t, i) => (
+          {Array(2).fill('POP PUNK ✦ POP ✦ ALTERNATIVE ✦ INDIE ROCK ✦ FOLK POP ✦ SOUL ✦ ').map((t, i) => (
             <span key={i}>{t}</span>
           ))}
         </div>
@@ -245,12 +261,12 @@ export default function App() {
       {/* ---------- tentang ---------- */}
       <section className="section" id="tentang">
         <div className="wrap">
-          <p className="chapter rv">Chapter 01 · Tentang</p>
-          <h2 className="h2 rv">Festival dua malam di <span className="ac">dunia lain</span></h2>
-          <p className="lead rv">RE:STAGE mengubah Ecopark Ancol jadi kota fantasi. Tiga panggung, tata cahaya senja raksasa, dan 24 penampil dari Jepang sampai lokal. Beli tiketnya online, tukarkan wristband di gerbang, dan nikmati malamnya.</p>
+          <p className="chapter rv">{I.bolt(14)} Chapter 01 · Tentang</p>
+          <h2 className="h2 rv">Pesta musik <span className="ac">Indonesia</span>,<br />dari pop sampai pop punk.</h2>
+          <p className="lead rv">RIUH FEST ngumpulin musisi Indonesia lintas generasi dalam dua hari. Dari sing along bareng Tulus sampai moshing bareng Perunggu, semua ada di sini.</p>
           <div className="stats">
-            {[['02', 'Hari penuh'], ['03', 'Panggung'], ['24', 'Penampil'], ['15rb+', 'Tiket terjual']].map(([n, l]) => (
-              <div className="stat rv" key={l}><b>{n}</b><span>{l}</span></div>
+            {[['02', 'Hari penuh', 'ticket'], ['03', 'Panggung', 'speaker'], ['24', 'Penampil', 'mic'], ['15rb+', 'Tiket terjual', 'bolt']].map(([n, l, ic]) => (
+              <div className="stat rv" key={l}><span className="stat-ic">{I[ic](22)}</span><b>{n}</b><span>{l}</span></div>
             ))}
           </div>
         </div>
@@ -259,8 +275,8 @@ export default function App() {
       {/* ---------- lineup ---------- */}
       <section className="section alt" id="lineup">
         <div className="wrap">
-          <p className="chapter rv">Chapter 02 · Lineup</p>
-          <h2 className="h2 rv">Para bintang dari <span className="ac">dunia lain</span></h2>
+          <p className="chapter rv">{I.mic(14)} Chapter 02 · Lineup</p>
+          <h2 className="h2 rv">Lineup <span className="ac">lokal</span> pilihan</h2>
           <div className="lineup-grid">
             {lineup.map((a) => (
               <article className="artist rv" key={a.name}>
@@ -273,14 +289,33 @@ export default function App() {
               </article>
             ))}
           </div>
-          <p className="note rv">+ 18 penampil lain diumumkan bertahap. Pantau Instagram @restage.fest.</p>
+          <p className="note rv">+ 18 penampil lain diumumkan bertahap. Pantau Instagram @riuh.fest.</p>
+        </div>
+      </section>
+
+      {/* ---------- panggung ---------- */}
+      <section className="section" id="panggung">
+        <div className="wrap">
+          <p className="chapter rv">{I.speaker(14)} Chapter 03 · Panggung</p>
+          <h2 className="h2 rv">Tiga panggung, <span className="ac">tiga energi</span></h2>
+          <div className="stage-grid">
+            {stages.map((s) => (
+              <article className="stage rv" key={s.name}>
+                <span className="stage-ic">{I[s.icon](30)}</span>
+                <span className="tag">{s.tag}</span>
+                <h3>{s.name}</h3>
+                <p>{s.desc}</p>
+                <small>{s.meta}</small>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ---------- tiket ---------- */}
-      <section className="section" id="tiket">
+      <section className="section alt" id="tiket">
         <div className="wrap">
-          <p className="chapter rv">Chapter 03 · Tiket</p>
+          <p className="chapter rv">{I.ticket(14)} Chapter 04 · Tiket</p>
           <h2 className="h2 rv">Pilih <span className="ac">tiketmu</span></h2>
           <p className="lead rv">Presale 1 sudah habis. Sekarang masuk <b>Presale 2</b>, harga naik lagi saat fase Normal. Maksimal 8 tiket per transaksi.</p>
           <div className="tier-grid">
@@ -289,11 +324,12 @@ export default function App() {
               return (
                 <article className={`tier rv ${t.hot ? 'hot' : ''}`} key={t.id}>
                   {t.hot && <span className="tier-badge">Paling laris</span>}
+                  <span className="tier-ic">{I[t.icon](28)}</span>
                   <h3>{t.name}</h3>
                   <p className="tier-desc">{t.desc}</p>
                   <p className="tier-price"><span className="now">{rupiah(t.price)}</span><span className="was">{rupiah(t.normal)}</span></p>
                   <p className="tier-phase">{t.phase} · tersisa {t.left}</p>
-                  <ul>{t.feats.map((f) => <li key={f}>{f}</li>)}</ul>
+                  <ul>{t.feats.map((f) => <li key={f}>{I.check(15)}<span>{f}</span></li>)}</ul>
                   <div className="qty-row">
                     <div className="qty-ctl">
                       <button onClick={() => setQty(t.id, q - 1)} disabled={q === 0} aria-label={`Kurangi ${t.name}`}>−</button>
@@ -310,9 +346,9 @@ export default function App() {
       </section>
 
       {/* ---------- rundown ---------- */}
-      <section className="section alt" id="rundown">
+      <section className="section" id="rundown">
         <div className="wrap">
-          <p className="chapter rv">Chapter 04 · Rundown</p>
+          <p className="chapter rv">{I.drum(14)} Chapter 05 · Rundown</p>
           <h2 className="h2 rv">Jadwal <span className="ac">acara</span></h2>
           <div className="days">
             {rundown.map((d) => (
@@ -339,9 +375,9 @@ export default function App() {
             <p className="lead">Gerbang dibuka pukul 15.00 tiap harinya. Tukar e-ticket dengan wristband di pintu masuk sesuai tier. Parkir tersedia di area P2 Ancol.</p>
           </div>
           <ul className="venue-list rv">
-            <li><b>3 Realm</b><span>Sanctuary Stage · Witch's Hollow · Dragon's Roost</span></li>
-            <li><b>Food Court</b><span>40+ tenant kuliner Jepang & lokal</span></li>
-            <li><b>Cosplay Area</b><span>Cosplay walk & lomba kostum tiap sore</span></li>
+            <li><span className="v-ic">{I.speaker(20)}</span><div><b>3 Panggung</b><span>Gelora · Distorsi · Senja</span></div></li>
+            <li><span className="v-ic">{I.ticket(20)}</span><div><b>Food Court</b><span>40+ tenant kuliner lokal</span></div></li>
+            <li><span className="v-ic">{I.pick(20)}</span><div><b>Merch Area</b><span>Official merchandise semua penampil</span></div></li>
           </ul>
         </div>
       </section>
@@ -349,7 +385,7 @@ export default function App() {
       {/* ---------- faq ---------- */}
       <section className="section" id="faq">
         <div className="wrap narrow">
-          <p className="chapter rv">Chapter 05 · FAQ</p>
+          <p className="chapter rv">{I.bolt(14)} Chapter 06 · FAQ</p>
           <h2 className="h2 rv">Yang sering <span className="ac">ditanyakan</span></h2>
           <div className="faq-list">
             {faqs.map((f, i) => (
@@ -369,7 +405,7 @@ export default function App() {
         <div className="wrap rv">
           <p className="chapter">Jangan sampai ketinggalan</p>
           <h2 className="h2">Presale 2 segera <span className="ac">habis</span>.<br />Amankan kursimu.</h2>
-          <a href="#tiket" className="btn btn-glow btn-lg">Beli Tiket Sekarang</a>
+          <a href="#tiket" className="btn btn-fire btn-lg">Beli Tiket Sekarang</a>
         </div>
       </section>
 
@@ -377,14 +413,14 @@ export default function App() {
       <footer className="footer">
         <div className="wrap foot-in">
           <a href="#top" className="brand">
-            <img src="/logo.png" alt="Logo RE:STAGE" className="brand-logo" />
-            <span className="brand-name">RE:STAGE</span>
+            <img src="/logo.png" alt="Logo RIUH FEST" className="brand-logo" />
+            <span className="brand-name">RIUH FEST</span>
           </a>
           <nav className="foot-links">
             <a href="#lineup">Lineup</a><a href="#tiket">Tiket</a>
             <a href="#rundown">Rundown</a><a href="#faq">FAQ</a>
           </nav>
-          <p>© 2026 RE:STAGE. Another World Music Festival.</p>
+          <p>© 2026 RIUH FEST. Festival Pop & Pop Punk Indonesia.</p>
         </div>
       </footer>
 
@@ -394,7 +430,7 @@ export default function App() {
           <b>{totalQty} tiket · {rupiah(total)}</b>
           <span>termasuk biaya layanan 5%</span>
         </div>
-        <button className="btn btn-glow" onClick={startCheckout}>Lanjut</button>
+        <button className="btn btn-fire" onClick={startCheckout}>Lanjut</button>
       </div>
 
       {/* ---------- checkout modal ---------- */}
@@ -441,7 +477,7 @@ export default function App() {
                 </div>
                 <div className="modal-nav">
                   <button className="btn btn-ghost" onClick={closeModal}>Batal</button>
-                  <button className="btn btn-glow" onClick={toPay}>Lanjut Bayar</button>
+                  <button className="btn btn-fire" onClick={toPay}>Lanjut Bayar</button>
                 </div>
               </>
             )}
@@ -461,7 +497,7 @@ export default function App() {
                 </div>
                 <div className="modal-nav" style={{ marginTop: 18 }}>
                   <button className="btn btn-ghost" onClick={() => setModal('data')}>Kembali</button>
-                  <button className="btn btn-glow" onClick={doPay} disabled={!pay}>Bayar {rupiah(total)}</button>
+                  <button className="btn btn-fire" onClick={doPay} disabled={!pay}>Bayar {rupiah(total)}</button>
                 </div>
               </>
             )}
@@ -470,17 +506,17 @@ export default function App() {
               <div className="success">
                 <h3>Memproses pembayaran…</h3>
                 <p className="sub">Jangan tutup halaman ini.</p>
-                <button className="btn btn-glow" disabled><span className="spin" />Memproses</button>
+                <button className="btn btn-fire" disabled><span className="spin" />Memproses</button>
               </div>
             )}
 
             {modal === 'done' && (
               <div className="success">
-                <div className="ok">✓</div>
+                <div className="ok">{I.check(38)}</div>
                 <h3>Pembayaran berhasil!</h3>
                 <div className="code">{code}</div>
-                <p>E-ticket ({totalQty} tiket) dikirim ke <b>{buyer.email}</b>. Tunjukkan QR e-ticket di gerbang untuk ditukar wristband. Sampai jumpa di dunia lain!</p>
-                <button className="btn btn-glow btn-block" onClick={closeModal}>Selesai</button>
+                <p>E-ticket ({totalQty} tiket) dikirim ke <b>{buyer.email}</b>. Tunjukkan QR e-ticket di gerbang untuk ditukar wristband. Sampai jumpa di keriuhan!</p>
+                <button className="btn btn-fire btn-block" onClick={closeModal}>Selesai</button>
               </div>
             )}
           </div>
