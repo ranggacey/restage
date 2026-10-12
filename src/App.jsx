@@ -165,6 +165,19 @@ export default function App() {
     return () => { document.body.style.overflow = '' }
   }, [modal])
 
+  // drawer mobile: ESC nutup, scroll body dikunci pas drawer buka
+  useEffect(() => {
+    if (!burger) return
+    const onKey = (e) => { if (e.key === 'Escape') setBurger(false) }
+    document.addEventListener('keydown', onKey)
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.body.style.overflow = prev
+    }
+  }, [burger])
+
   const setQty = (id, q) => setCart((c) => ({ ...c, [id]: Math.max(0, Math.min(MAX_QTY, q)) }))
   const totalQty = Object.values(cart).reduce((a, b) => a + b, 0)
   const subtotal = tiers.reduce((a, t) => a + t.price * (cart[t.id] || 0), 0)
@@ -215,11 +228,12 @@ export default function App() {
         </nav>
         <div className="nav-cta">
           <a href="#tiket" className="btn btn-fire">Beli Tiket</a>
-          <button className="burger" onClick={() => setBurger(!burger)} aria-label="Menu">
+          <button className={`burger${burger ? ' open' : ''}`} onClick={() => setBurger(!burger)} aria-label={burger ? 'Tutup menu' : 'Buka menu'} aria-expanded={burger}>
             <span /><span /><span />
           </button>
         </div>
       </header>
+      {burger && <div className="drawer-veil" onClick={() => setBurger(false)} aria-hidden="true" />}
 
       {/* ---------- hero ---------- */}
       <section className="hero" id="top">
