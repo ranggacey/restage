@@ -190,7 +190,7 @@ export default function App() {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'
       let c = ''
       for (let i = 0; i < 6; i++) c += chars[Math.floor(Math.random() * chars.length)]
-      setCode('RIUH-' + c)
+      setCode('LUNAR-' + c)
       setModal('done')
     }, 1800)
   }
@@ -204,8 +204,8 @@ export default function App() {
       {/* ---------- nav ---------- */}
       <header className="nav">
         <a href="#top" className="brand">
-          <img src="/logo.png" alt="Logo RIUH FEST" className="brand-logo" />
-          <span className="brand-name">RIUH FEST</span>
+          <img src="/logo.png" alt="Logo LUNAR MUSIC" className="brand-logo" />
+          <span className="brand-name">LUNAR MUSIC</span>
         </a>
         <nav className={`nav-links ${burger ? 'open' : ''}`}>
           <a href="#lineup" onClick={() => setBurger(false)}>Lineup</a>
@@ -225,13 +225,13 @@ export default function App() {
       <section className="hero" id="top">
         <div className="sky" aria-hidden="true" />
         <div className="halftone" aria-hidden="true" />
-        <div className="sun" aria-hidden="true" />
+        <div className="moon" aria-hidden="true" />
         <div className="sticker s1 rv" aria-hidden="true">100%<br />LOKAL</div>
         <div className="sticker s2 rv" aria-hidden="true">2 HARI<br />PENUH</div>
         <div className="hero-inner">
           <p className="eyebrow rv">{I.bolt(14)} Festival Pop & Pop Punk Indonesia · Vol. 1</p>
-          <h1 className="hero-title rv">RIUH<br />FEST</h1>
-          <p className="hero-sub rv">Dua hari penuh distorsi dan sing along. Tulus, Bernadya, Perunggu, Hindia, Pee Wee Gaskins, Nadin Amizah, satu panggung riuh.</p>
+          <h1 className="hero-title rv">LUNAR<br />MUSIC</h1>
+          <p className="hero-sub rv">Dua hari penuh distorsi dan sing along. Tulus, Bernadya, Perunggu, Hindia, Pee Wee Gaskins, Nadin Amizah, satu panggung di bawah rembulan.</p>
           <div className="hero-pills rv">
             <span>19 – 20 Desember 2026</span>
             <span>Ecopark Ancol, Jakarta</span>
@@ -263,7 +263,7 @@ export default function App() {
         <div className="wrap">
           <p className="chapter rv">{I.bolt(14)} Chapter 01 · Tentang</p>
           <h2 className="h2 rv">Pesta musik <span className="ac">Indonesia</span>,<br />dari pop sampai pop punk.</h2>
-          <p className="lead rv">RIUH FEST ngumpulin musisi Indonesia lintas generasi dalam dua hari. Dari sing along bareng Tulus sampai moshing bareng Perunggu, semua ada di sini.</p>
+          <p className="lead rv">LUNAR MUSIC ngumpulin musisi Indonesia lintas generasi dalam dua hari. Dari sing along bareng Tulus sampai moshing bareng Perunggu, semua ada di sini.</p>
           <div className="stats">
             {[['02', 'Hari penuh', 'ticket'], ['03', 'Panggung', 'speaker'], ['24', 'Penampil', 'mic'], ['15rb+', 'Tiket terjual', 'bolt']].map(([n, l, ic]) => (
               <div className="stat rv" key={l}><span className="stat-ic">{I[ic](22)}</span><b>{n}</b><span>{l}</span></div>
@@ -289,7 +289,7 @@ export default function App() {
               </article>
             ))}
           </div>
-          <p className="note rv">+ 18 penampil lain diumumkan bertahap. Pantau Instagram @riuh.fest.</p>
+          <p className="note rv">+ 18 penampil lain diumumkan bertahap. Pantau Instagram @lunar.music.</p>
         </div>
       </section>
 
@@ -413,14 +413,14 @@ export default function App() {
       <footer className="footer">
         <div className="wrap foot-in">
           <a href="#top" className="brand">
-            <img src="/logo.png" alt="Logo RIUH FEST" className="brand-logo" />
-            <span className="brand-name">RIUH FEST</span>
+            <img src="/logo.png" alt="Logo LUNAR MUSIC" className="brand-logo" />
+            <span className="brand-name">LUNAR MUSIC</span>
           </a>
           <nav className="foot-links">
             <a href="#lineup">Lineup</a><a href="#tiket">Tiket</a>
             <a href="#rundown">Rundown</a><a href="#faq">FAQ</a>
           </nav>
-          <p>© 2026 RIUH FEST. Festival Pop & Pop Punk Indonesia.</p>
+          <p>© 2026 LUNAR MUSIC. Festival Pop & Pop Punk Indonesia.</p>
         </div>
       </footer>
 
@@ -515,7 +515,7 @@ export default function App() {
                 <div className="ok">{I.check(38)}</div>
                 <h3>Pembayaran berhasil!</h3>
                 <div className="code">{code}</div>
-                <p>E-ticket ({totalQty} tiket) dikirim ke <b>{buyer.email}</b>. Tunjukkan QR e-ticket di gerbang untuk ditukar wristband. Sampai jumpa di keriuhan!</p>
+                <p>E-ticket ({totalQty} tiket) dikirim ke <b>{buyer.email}</b>. Tunjukkan QR e-ticket di gerbang untuk ditukar wristband. Sampai jumpa di bawah rembulan!</p>
                 <button className="btn btn-fire btn-block" onClick={closeModal}>Selesai</button>
               </div>
             )}

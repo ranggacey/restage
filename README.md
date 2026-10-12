@@ -1,4 +1,4 @@
-# RE:STAGE — Another World Music Festival
+# Lunar Music — Festival Pop & Pop Punk Indonesia
 
 Landing page festival musik bertema isekai/fantasy, terinspirasi key visual Re:ZERO Season 4 (langit senja ungu-magenta-amber).
 
